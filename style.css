@@ -1,0 +1,47 @@
+body{
+    background: white;
+    color:black;
+}
+
+li{
+    margin: 10px;
+    height: 150px;
+}
+
+.erea{
+    font-size: 100px;
+}
+
+.button-erea{
+    width: 100%
+}
+
+.button-erea button{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    font-size: 30%;
+}
+
+.test_look{
+    font-family: 'Roboto Mono', monospace;
+    width: 1300px;
+	height: 800px;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+.input_time{
+    width: 30%;
+    text-align: left;
+    margin-top: 10px;
+    height: 90%;
+    font-size: 80%;
+}
+
+.set_button{
+    width: 50%;
+    text-align: right;
+    height: 50%;
+}

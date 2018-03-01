@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>タイマー</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+</head>
+<body>
+    <div class="erea">
+        <div class="test_look">
+            <div id="jp_remain">残り</div>
+            <div id="timer"></div>
+        </div>
+    
+        <!-- Socketio 指定 -->
+        <script src="/socket.io/socket.io.js"></script>
+    
+        <script type="text/javascript">
+
+            // 終了時に音を鳴らす場合は音声ファイルのパスを指定
+            var audio = new Audio('');
+            
+            // 接続先アドレス(URL or IP)指定
+            var socketio = io.connect('');
+
+            var remain = document.getElementById('jp_remain');
+
+            socketio.on("publish", function (data) { 
+                addMessage(data.value); 
+            });
+
+    
+            function start(name) {
+                socketio.emit("connected", name);
+            }
+
+            function publishMessage(time) {
+            }
+            
+            function addMessage (msg) {
+                var remaind = '';
+                if(msg === '終了ですな'){
+                    remaind = '';
+                    audio.play();      // 音を流す
+                }else{
+                    msg =  msg;
+                    remaind = '残り';
+                }
+                timer.textContent = msg;
+                remain.textContent = remaind;
+            }
+        </script>
+    </div>
+</body>
+</html>
