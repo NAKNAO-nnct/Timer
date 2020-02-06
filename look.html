@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,45 +9,46 @@
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
     <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 </head>
+
 <body>
     <div class="erea">
         <div class="test_look">
             <div id="jp_remain">残り</div>
             <div id="timer"></div>
         </div>
-    
+
         <!-- Socketio 指定 -->
-        <script src="/socket.io/socket.io.js"></script>
-    
+        <script src="http://127.0.0.1:9500/socket.io/socket.io.js"></script>
+
         <script type="text/javascript">
 
             // 終了時に音を鳴らす場合は音声ファイルのパスを指定
-            var audio = new Audio('');
-            
+            var audio = new Audio('1.mp3');
+
             // 接続先アドレス(URL or IP)指定
-            var socketio = io.connect('');
+            var socketio = io.connect('127.0.0.1:9500');
 
             var remain = document.getElementById('jp_remain');
 
-            socketio.on("publish", function (data) { 
-                addMessage(data.value); 
+            socketio.on("publish", function (data) {
+                addMessage(data.value);
             });
 
-    
+
             function start(name) {
                 socketio.emit("connected", name);
             }
 
             function publishMessage(time) {
             }
-            
-            function addMessage (msg) {
+
+            function addMessage(msg) {
                 var remaind = '';
-                if(msg === '終了ですな'){
+                if (msg === '終了ですな') {
                     remaind = '';
                     audio.play();      // 音を流す
-                }else{
-                    msg =  msg;
+                } else {
+                    msg = msg;
                     remaind = '残り';
                 }
                 timer.textContent = msg;
@@ -55,4 +57,5 @@
         </script>
     </div>
 </body>
+
 </html>

@@ -1,18 +1,27 @@
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>タイマー管理</title>
 
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
+        integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 
 
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js"
+        integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"
+        integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js"
+        integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
+        crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
 </head>
+
 <body>
     <div class="erea">
         <div id="jp_remain"></div>
@@ -20,137 +29,157 @@
 
         <div class="button-erea">
             <ul class="list-group">
-                <li class="list-group-item"><button type="button" class="btn btn-outline-primary" id="start">Start</button></li>
-                <li class="list-group-item"><button type="button" class="btn btn-outline-primary" id="stop">Stop</button></li>
-                <li class="list-group-item"><button type="button" class="btn btn-outline-primary" id="reset">Reset</button></li>
+                <li class="list-group-item"><button type="button" class="btn btn-outline-primary"
+                        id="start">Start</button></li>
+                <li class="list-group-item"><button type="button" class="btn btn-outline-primary"
+                        id="stop">Stop</button></li>
+                <li class="list-group-item"><button type="button" class="btn btn-outline-primary"
+                        id="reset">Reset</button></li>
             </ul>
         </div>
         <div>
             <ul class="list-group">
-                <li class="list-group-item"><input class="input_time" type="number" min="0" max="99.99" value="5" id="input_time">分<button type="button" class="btn btn-outline-primary set_button" id="set" onclick="setTime()">Set</button></li>
+                <li class="list-group-item"><input class="input_time" type="number" min="0" max="99.99" value="5"
+                        id="input_time">分<button type="button" class="btn btn-outline-primary set_button" id="set"
+                        onclick="setTime()">Set</button></li>
             </ul>
         </div>
     </div>
     <div id="audio_stop"></div>
-  <script src="/socket.io/socket.io.js"></script>
-  <script type="text/javascript">
-    // 設定
-    var time = 0;
-    var elapsedTime = 0;
-    
-    // timer
-    var start = document.getElementById('start');
-    var stop = document.getElementById('stop');
-    var reset = document.getElementById('reset');
+    <script src="http://127.0.0.1:9500/socket.io/socket.io.js"></script>
+    <script type="text/javascript">
 
-    // timerセット
-    function setTime(){
-        var init_time = (document.getElementById('input_time')).value;
-        time = init_time * 60 * 1000;
-        console.log(time);
-        elapsedTime = time;
-        updateTimerText();
-        start.disabled = "";
-        stop.disabled = "true";
-        reset.disabled = "";
-    }
-    
-    // 接続先URL指定
-    var socketio = io.connect('');
+        // 終了時に音を鳴らす場合は音声ファイルのパスを指定
+        var audio1 = new Audio('1.mp3');
+        var audio = new Audio('2.mp3');
 
-    socketio.on("connected", function(name) {});
-    socketio.on("publish", function (data) { addMessage(data.value); });
-    socketio.on("disconnect", function () {});
-    
-    var timer = document.getElementById('timer');
-    var remain = document.getElementById('jp_remain')
+        // 設定
+        var time = 0;
+        var elapsedTime = 0;
 
-    start.disabled = "";
-    stop.disabled = "true";
-    reset.disabled = "";
+        // timer
+        var start = document.getElementById('start');
+        var stop = document.getElementById('stop');
+        var reset = document.getElementById('reset');
 
-
-    var startTime;
-    var timerId;
-    var timeToAdd = 0;
-
-    function updateTimerText(){
-        var m = Math.floor(elapsedTime / 60000);
-        var s = Math.floor(elapsedTime % 60000 / 1000);
-        var ms = elapsedTime % 1000;
-
-        m = ('0' + m).slice(-2);
-        s = ('0' + s).slice(-2);
-        ms = ('00' + ms).slice(-3);
-
-        var time = m + ':' + s
-        timer.textContent = time;
-        publishMessage(time);
-    }
-
-    function countUp(){
-        timerId = setTimeout(function(){
-            elapsedTime = Date.now() - startTime + timeToAdd;
-            elapsedTime = time - elapsedTime;
-            if(elapsedTime < 1200){
-                remain.textContent = '';
-                timer.textContent = '終了ですな';
-                start.disabled = "true";
-                stop.disabled = "true";
-                reset.disabled = "";
-                var finer = 'x000';     // 終了コード
-                publishMessage(finer);  
-                return true;
-            }
-            console.log(elapsedTime);
+        // timerセット
+        function setTime() {
+            var init_time = (document.getElementById('input_time')).value;
+            time = init_time * 60 * 1000;
+            console.log(time);
+            elapsedTime = time;
+            // elapsedTime = 0;
             updateTimerText();
+            start.disabled = "";
+            stop.disabled = "true";
+            reset.disabled = "";
+        }
+
+        // 接続先URL指定
+        var socketio = io.connect('127.0.0.1:9500');
+
+        // socketio.on("connected", function(name) {});
+        socketio.on("publish", function (data) { addMessage(data.value); });
+        // socketio.on("disconnect", function () {});
+
+        var timer = document.getElementById('timer');
+        var remain = document.getElementById('jp_remain')
+
+        start.disabled = "";
+        stop.disabled = "true";
+        reset.disabled = "";
+
+
+        var startTime;
+        var timerId;
+        var timeToAdd = 0;
+
+        function updateTimerText() {
+            var m = Math.floor(elapsedTime / 60000);
+            var s = Math.floor(elapsedTime % 60000 / 1000);
+            var ms = elapsedTime % 1000;
+
+            m = ('0' + m).slice(-2);
+            s = ('0' + s).slice(-2);
+            ms = ('00' + ms).slice(-3);
+
+            var time = m + ':' + s
+            timer.textContent = time;
+            publishMessage(time);
+        }
+
+        function countUp() {
+            timerId = setTimeout(function () {
+                elapsedTime = Date.now() - startTime + timeToAdd;
+                elapsedTime = time - elapsedTime;
+                // elapsedTime = time - timeToAdd;
+                // console.log(elapsedTime);
+
+                if (elapsedTime < 1200) {
+                    remain.textContent = '';
+                    timer.textContent = '終了ですな';
+                    start.disabled = "true";
+                    stop.disabled = "true";
+                    reset.disabled = "";
+                    var finer = 'x000';     // 終了コード
+                    publishMessage(finer);
+                    return true;
+                }
+                // console.log(elapsedTime);
+                updateTimerText();
+                countUp();
+            }, 10);
+        }
+
+        start.addEventListener('click', function () {
+            startTime = Date.now();
+            start.disabled = "true";
+            stop.disabled = "";
+            reset.disabled = "true";
             countUp();
-        }, 10);
-    }
+        });
 
-    start.addEventListener('click', function(){
-        startTime = Date.now();
-        start.disabled = "true";
-        stop.disabled = "";
-        reset.disabled = "true";
-        countUp();
-    });
+        stop.addEventListener('click', function () {
+            clearTimeout(timerId);
+            timeToAdd += Date.now() - startTime;
+            start.disabled = "";
+            stop.disabled = "true";
+            reset.disabled = "";
+        });
 
-    stop.addEventListener('click', function(){
-        clearTimeout(timerId);
-        timeToAdd += Date.now() - startTime;
-        start.disabled = "";
-        stop.disabled = "true";
-        reset.disabled = "";
-    });
+        reset.addEventListener('click', function () {
+            elapsedTime = time;
+            timeToAdd = 0;
+            updateTimerText();
+            start.disabled = "";
+            stop.disabled = "true";
+            reset.disabled = "";
+        });
 
-    reset.addEventListener('click', function(){
-        elapsedTime = time;
-        timeToAdd = 0;
-        updateTimerText();
-        start.disabled = "";
-        stop.disabled = "true";
-        reset.disabled = "";
-    });
+        function start(name) {
+            socketio.emit("connected", name);
+        }
 
-    function start(name) {
-      socketio.emit("connected", name);
-    }
+        function publishMessage(time) {
+            var msg = '';
+            if (time === 'x000') {
+                msg = '終了ですな';
+                audio.play();
+            } else {
+                msg = time;
+                // console.log(msg);
+                if (msg == '01:00') {
+                    audio1.play();
+                }
+            }
+            socketio.emit("publish", { value: msg });
+        }
 
-    function publishMessage(time) {
-        var msg = '';
-      if(time === 'x000'){
-        msg = '終了ですな';
-      }else{
-        msg =  time;
-      }
-      socketio.emit("publish", {value: msg});
-    }
+        function addMessage(msg) {
+            timer.textContent = msg;
+        }
 
-    function addMessage (msg) {
-        timer.textContent = msg;
-    }
-
-  </script>
+    </script>
 </body>
+
 </html>
